@@ -40,9 +40,19 @@ export default async function GameShowPage({ params }: PageProps) {
         notFound();
     }
 
+    // Serialize dates for Client Component
+    const serializableGame = {
+        ...game,
+        releaseDate: game.releaseDate.toISOString(),
+        console: game.console ? {
+            ...game.console,
+            releaseDate: game.console.releaseDate.toISOString(),
+        } : null
+    };
+
     return (
-        <div className="container mx-auto px-4 py-8">
-                <GameShow game={game} />
-            </div>
+        <div className="container mx-auto px-4 py-12">
+            <GameShow game={serializableGame as any} />
+        </div>
     );
 }

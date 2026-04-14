@@ -20,10 +20,21 @@ export default async function GamesInfo() {
         }
     });
 
+    const serializableGames = games.map(game => ({
+        ...game,
+        releaseDate: game.releaseDate.toISOString(),
+        console: game.console ? {
+            ...game.console,
+            releaseDate: game.console.releaseDate.toISOString(),
+        } : null,
+    }));
+
     return (
-        <div>
-            <h1 className="text-4xl border-b-2 pb-2 mb-8">Games</h1>
-            <GamesTable initialGames={games} />
+        <div className="w-full">
+            <h1 className="text-6xl font-black text-neon-green uppercase tracking-tighter mb-12 glow-text italic">
+                Digital Archive
+            </h1>
+            <GamesTable initialGames={serializableGames as any} />
         </div>
     );
 }
