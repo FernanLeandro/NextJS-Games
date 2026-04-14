@@ -1,7 +1,14 @@
 "use client";
 import { UserButton } from "@stackframe/stack";
 import Link from "next/link";
-import { SquaresFour, Joystick, Plus, Gear, List, GameController } from "@phosphor-icons/react";
+import { 
+    SquaresFour, 
+    Joystick, 
+    Plus, 
+    Gear, 
+    List, 
+    GameController,
+} from "@phosphor-icons/react";
 
 export default function SideBar({
     currentPath = "/dashboard",
@@ -14,6 +21,8 @@ export default function SideBar({
         { name: "Dashboard", href: "/dashboard", icon: SquaresFour },
         { name: "Games", href: "/games", icon: Joystick },
         { name: "Add Game", href: "/games/add", icon: Plus },
+        { name: "Consolas", href: "/consolas", icon: GameController },
+        { name: "Add Console", href: "/consolas/add", icon: Plus },
         { name: "Settings", href: "/settings", icon: Gear },
     ];
     return (

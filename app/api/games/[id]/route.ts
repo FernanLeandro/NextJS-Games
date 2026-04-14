@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { PrismaClient } from "@/app/generated/prisma";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import fs from "fs/promises";
 import path from "path";
+import { deleteUpload } from "@/lib/utils/file-manager";
 
 const prisma = new PrismaClient({
     adapter: new PrismaNeon({
@@ -139,6 +141,15 @@ export async function PUT(request: Request, { params }: RouteParams) {
             console_id
         } = body;
 
+        // Obtener el juego actual para revisar la portada antigua
+        const currentGame = await prisma.game.findUnique({
+            where: { id: gameId }
+        });
+
+        if (!currentGame) {
+            return NextResponse.json({ error: "Juego no encontrado" }, { status: 404 });
+        }
+
         const data: any = {
             title,
             developer,
@@ -160,6 +171,14 @@ export async function PUT(request: Request, { params }: RouteParams) {
                 console: true,
             },
         });
+
+        // Si se subió una nueva portada y existía una antigua, borrar la antigua
+        if (cover && currentGame.cover && cover !== currentGame.cover) {
+            await deleteUpload(currentGame.cover);
+        }
+
+        revalidatePath("/dashboard");
+        revalidatePath("/games");
 
         return NextResponse.json(game);
     } catch (error: unknown) {
@@ -191,9 +210,22 @@ export async function DELETE(request: Request, { params }: RouteParams) {
             );
         }
 
+        // Obtener la portada antes de borrar el registro
+        const game = await prisma.game.findUnique({
+            where: { id: gameId }
+        });
+
         await prisma.game.delete({
             where: { id: gameId },
         });
+
+        // Borrar el archivo físico si existía
+        if (game?.cover) {
+            await deleteUpload(game.cover);
+        }
+
+        revalidatePath("/dashboard");
+        revalidatePath("/games");
 
         return NextResponse.json({ message: "Juego eliminado exitosamente" });
     } catch (error) {

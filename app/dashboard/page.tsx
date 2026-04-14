@@ -11,6 +11,8 @@ const prisma = new PrismaClient({
     }),
 });
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardsPage(
     {
         children
@@ -22,14 +24,17 @@ export default async function DashboardsPage(
         redirect("/");
     }
 
-    const games = await prisma.game.findMany({
-        include: {
-            console: true,
-        },
-        orderBy: {
-            title: "asc",
-        },
-    });
+    const [games, totalConsoles] = await Promise.all([
+        prisma.game.findMany({
+            include: {
+                console: true,
+            },
+            orderBy: {
+                title: "asc",
+            },
+        }),
+        prisma.console.count()
+    ]);
 
     const chartGames = games.map((game) => ({
         id: game.id,
@@ -52,7 +57,7 @@ export default async function DashboardsPage(
                             Análisis en tiempo real // Distribución de sistemas y cronología de despliegues
                         </p>
                     </div>
-                    <DashboardCharts games={chartGames} />
+                    <DashboardCharts games={chartGames} totalConsoles={totalConsoles} />
                     {children}
                 </div>
             </SideBar>

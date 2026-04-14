@@ -22,9 +22,10 @@ type GameChartProps = {
     console: { name: string };
     releaseDate: string;
   }[];
+  totalConsoles: number;
 };
 
-export default function DashboardCharts({ games }: GameChartProps) {
+export default function DashboardCharts({ games, totalConsoles }: GameChartProps) {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -66,7 +67,7 @@ export default function DashboardCharts({ games }: GameChartProps) {
         </div>
         <div className="glass-card rounded-3xl p-6 border-l-4 border-l-emerald-500">
           <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-1">Sistemas Activos</p>
-          <p className="text-4xl font-black text-white glow-text">{Object.keys(gamesByConsole).length}</p>
+          <p className="text-4xl font-black text-white glow-text">{totalConsoles}</p>
         </div>
         <div className="glass-card rounded-3xl p-6 border-l-4 border-l-cyan-500">
           <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-1">Rango Temporal</p>

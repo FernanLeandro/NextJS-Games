@@ -5,6 +5,7 @@ import fs from "fs/promises";
 import path from "path";
 import { gameSchema } from "@/lib/validations/game";
 import { handleRequestError } from "@/lib/utils/error-handler";
+import { revalidatePath } from "next/cache";
 
 const prisma = new PrismaClient({
   adapter: new PrismaNeon({
@@ -120,8 +121,11 @@ export async function POST(request: Request) {
       },
     });
 
+    revalidatePath("/dashboard");
+    revalidatePath("/games");
+
     return NextResponse.json(game, { status: 201 });
   } catch (error) {
     return handleRequestError(error);
   }
-}
+}
