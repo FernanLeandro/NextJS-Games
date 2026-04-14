@@ -30,7 +30,7 @@ export default function HomeInfo() {
       <div className="relative z-10 flex flex-col items-center text-center max-w-md px-6">
 
         {/* Logo */}
-        <div className="mb-8 relative">
+        <div className="mb-2 relative">
           <div className="absolute -inset-4 bg-neon-green/5 blur-3xl rounded-full" />
           <Image
             src="/imgs/logonextjs.png"
@@ -55,10 +55,10 @@ export default function HomeInfo() {
         </p>
 
         {/* Action Buttons */}
-        <div className="flex gap-4 w-full justify-center">
+        <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
           <Link
             href="handler/sign-in"
-            className="flex items-center gap-3 px-10 py-4 rounded-2xl bg-neon-green text-deep-black text-xs font-black uppercase tracking-widest shadow-[0_0_30px_rgba(57,255,20,0.3)] hover:shadow-[0_0_40px_rgba(57,255,20,0.5)] transition-all"
+            className="flex items-center justify-center gap-3 w-full sm:w-auto px-10 py-4 rounded-2xl bg-neon-green text-deep-black text-xs font-black uppercase tracking-widest shadow-[0_0_30px_rgba(57,255,20,0.3)] hover:shadow-[0_0_40px_rgba(57,255,20,0.5)] transition-all"
           >
             <Fingerprint size={20} weight="bold" />
             Iniciar Sesión
@@ -66,7 +66,7 @@ export default function HomeInfo() {
 
           <Link
             href="handler/sign-up"
-            className="flex items-center gap-3 px-10 py-4 rounded-2xl border border-neon-green/30 text-xs font-black uppercase tracking-widest text-neon-green hover:border-neon-green hover:shadow-[0_0_20px_rgba(57,255,20,0.15)] transition-all"
+            className="flex items-center justify-center gap-3 w-full sm:w-auto px-10 py-4 rounded-2xl border border-neon-green/30 text-xs font-black uppercase tracking-widest text-neon-green hover:border-neon-green hover:shadow-[0_0_20px_rgba(57,255,20,0.15)] transition-all"
           >
             <UserPlus size={20} weight="bold" />
             Registrarse

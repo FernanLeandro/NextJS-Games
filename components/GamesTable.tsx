@@ -173,7 +173,7 @@ export default function GamesTable({ initialGames }: { initialGames: Game[] }) {
                         placeholder="Buscar en la red neuronal..."
                         value={searchTerm}
                         onChange={handleSearch}
-                        className="relative w-full bg-surface-dark border border-white/10 rounded-2xl py-5 px-8 text-white placeholder-gray-600 focus:outline-none focus:border-neon-green/50 focus:ring-1 focus:ring-neon-green/50 transition-all shadow-2xl"
+                        className="relative w-full bg-surface-dark border border-white/10 rounded-2xl py-4 px-6 sm:py-5 sm:px-8 text-white placeholder-gray-600 focus:outline-none focus:border-neon-green/50 focus:ring-1 focus:ring-neon-green/50 transition-all shadow-2xl"
                     />
                 </div>
                 
@@ -206,7 +206,7 @@ export default function GamesTable({ initialGames }: { initialGames: Game[] }) {
 
             {/* Grid de Juegos */}
             {paginatedGames.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-10">
                     {paginatedGames.map((game) => (
                         <GameCard 
                             key={game.id}
@@ -230,14 +230,14 @@ export default function GamesTable({ initialGames }: { initialGames: Game[] }) {
             {/* Modals */}
             {deleteCandidate && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-2xl p-4">
-                    <div className="w-full max-w-lg rounded-[3rem] border border-red-500/30 bg-surface-dark p-12 shadow-[0_0_50px_rgba(239,44,44,0.1)]">
-                        <h2 className="text-5xl font-black text-red-500 uppercase tracking-tighter mb-6 italic glow-text-red">Eliminar</h2>
+                    <div className="w-full max-w-lg rounded-[3rem] border border-red-500/30 bg-surface-dark p-6 sm:p-12 shadow-[0_0_50px_rgba(239,44,44,0.1)]">
+                        <h2 className="text-3xl sm:text-5xl font-black text-red-500 uppercase tracking-tighter mb-6 italic glow-text-red">Eliminar</h2>
                         <p className="text-gray-400 mb-10 text-lg leading-relaxed">
                             ¿Estás absolutamente seguro de eliminar a <strong className="text-white">{deleteCandidate.title}</strong>? Esta acción no se puede revertir.
                         </p>
-                        <div className="flex gap-6 justify-end">
-                            <button onClick={closeDeleteModal} className="px-10 py-4 rounded-2xl text-xs font-black uppercase text-gray-500 hover:text-white transition-colors">Abortar</button>
-                            <button onClick={confirmDelete} className="px-10 py-4 rounded-2xl bg-red-600 text-white text-xs font-black uppercase shadow-[0_0_30px_rgba(220,38,38,0.4)] hover:bg-red-500 hover:shadow-red-500/60 transition-all">{isDeleting ? 'Borrando...' : 'Confirmar'}</button>
+                        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-end">
+                            <button onClick={closeDeleteModal} className="w-full sm:w-auto px-6 py-4 sm:px-10 rounded-2xl text-xs font-black uppercase text-gray-500 hover:text-white transition-colors">CANCELAR</button>
+                            <button onClick={confirmDelete} className="w-full sm:w-auto px-6 py-4 sm:px-10 rounded-2xl bg-red-600 text-white text-xs font-black uppercase shadow-[0_0_30px_rgba(220,38,38,0.4)] hover:bg-red-500 hover:shadow-red-500/60 transition-all">{isDeleting ? 'Borrando...' : 'Confirmar'}</button>
                         </div>
                     </div>
                 </div>

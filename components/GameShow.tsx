@@ -68,7 +68,7 @@ export default function GameShow({ game }: GameShowProps) {
                         <ArrowLeft size={24} weight="bold" />
                     </button>
                     <div>
-                        <h1 className="text-5xl font-black text-white uppercase tracking-tighter italic glow-text">
+                        <h1 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter italic glow-text">
                             {game.title}
                         </h1>
                         <p className="text-[10px] uppercase tracking-[0.4em] font-black text-neon-green/60 mt-1">
@@ -77,14 +77,14 @@ export default function GameShow({ game }: GameShowProps) {
                     </div>
                 </div>
 
-                <div className="flex gap-4">
-                    <Link href="/" className="h-14 px-8 flex items-center gap-3 rounded-2xl border border-white/5 bg-white/[0.02] text-xs font-black uppercase text-gray-400 hover:text-white hover:bg-white/[0.05] transition-all">
+                <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-4">
+                    <Link href="/" className="h-14 w-full sm:w-auto justify-center px-8 flex items-center gap-3 rounded-2xl border border-white/5 bg-white/[0.02] text-xs font-black uppercase text-gray-400 hover:text-white hover:bg-white/[0.05] transition-all">
                         <House size={20} />
                         Terminal
                     </Link>
                     <button
                         onClick={() => router.push(`/games/${game.id}/edit`)}
-                        className="h-14 px-8 flex items-center gap-3 rounded-2xl bg-neon-green text-deep-black text-xs font-black uppercase shadow-[0_0_30px_rgba(57,255,20,0.3)] hover:shadow-neon-green/50 transition-all"
+                        className="h-14 w-full sm:w-auto justify-center px-8 flex items-center gap-3 rounded-2xl bg-neon-green text-deep-black text-xs font-black uppercase shadow-[0_0_30px_rgba(57,255,20,0.3)] hover:shadow-neon-green/50 transition-all"
                     >
                         <Pencil size={20} weight="bold" />
                         Modificar
@@ -112,7 +112,7 @@ export default function GameShow({ game }: GameShowProps) {
                             <Tag size={24} className="text-neon-green" weight="fill" />
                             <h3 className="text-xs font-black uppercase tracking-[0.3em] text-white">Adquisición</h3>
                         </div>
-                        <p className="text-5xl font-black text-white glow-text mb-2">
+                        <p className="text-4xl md:text-5xl font-black text-white glow-text mb-2">
                             {formatPrice(game.price)}
                         </p>
                         <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Valor de mercado actual</p>
@@ -122,7 +122,7 @@ export default function GameShow({ game }: GameShowProps) {
                 {/* Right Side: Data */}
                 <div className="space-y-8">
                     {/* Primary Info */}
-                    <div className="glass-card rounded-[3rem] p-10 space-y-10">
+                    <div className="glass-card rounded-[3rem] p-6 md:p-10 space-y-10">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-[0.4em] text-neon-green/60 block">Desarrollador</label>
@@ -163,11 +163,11 @@ export default function GameShow({ game }: GameShowProps) {
                     </div>
 
                     {/* Console Hardware Info */}
-                    <div className="glass-card rounded-[3rem] p-10 relative overflow-hidden group">
+                    <div className="glass-card rounded-[3rem] p-6 md:p-10 relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
                             <GameController size={120} weight="fill" />
                         </div>
-                        <h3 className="text-2xl font-black text-white uppercase tracking-tighter mb-8 italic">
+                        <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-tighter mb-8 italic">
                             Especificaciones // <span className="text-neon-green">{game.console?.name || "Desconocida"}</span>
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">

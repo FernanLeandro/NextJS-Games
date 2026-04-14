@@ -45,7 +45,7 @@ export default async function DashboardsPage(
             <SideBar currentPath="/dashboard">
                 <div className="space-y-8">
                     <div>
-                        <h1 className="text-6xl font-black text-neon-green uppercase tracking-tighter italic glow-text">
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-neon-green uppercase tracking-tighter italic glow-text">
                             Command Center
                         </h1>
                         <p className="text-[10px] uppercase tracking-[0.4em] font-black text-white/30 mt-2">

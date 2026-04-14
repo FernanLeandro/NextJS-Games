@@ -86,7 +86,7 @@ export default function GameCard({ game, onView, onEdit, onDelete, getConsoleCol
         </p>
 
         {/* Actions Overlay/Bottom */}
-        <div className="mt-5 flex items-center justify-between border-t border-white/5 pt-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+        <div className="mt-5 flex items-center justify-between border-t border-white/5 pt-4 opacity-100 transition-opacity duration-300 lg:opacity-0 lg:group-hover:opacity-100">
           <button
             onClick={() => onView(game.id)}
             className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-gray-400 transition-all hover:bg-neon-green hover:text-deep-black shadow-lg"

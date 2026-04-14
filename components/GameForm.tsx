@@ -146,7 +146,7 @@ export default function GameForm({ initialData, submitButtonText, gameId }: Game
             {/* Header section with Cyber aesthetics */}
             <div className="flex justify-between items-center mb-12">
                 <div>
-                    <h1 className="text-5xl font-black text-white uppercase tracking-tighter italic glow-text">
+                    <h1 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter italic glow-text">
                         {gameId ? 'Modificar Registro' : 'Nuevo Registro'}
                     </h1>
                     <p className="text-[10px] uppercase tracking-[0.4em] font-black text-neon-green/60 mt-1">
@@ -196,8 +196,8 @@ export default function GameForm({ initialData, submitButtonText, gameId }: Game
                     </div>
 
                     {/* Data Fields */}
-                    <div className="glass-card rounded-[3rem] p-10">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
+                    <div className="glass-card rounded-[3rem] p-6 md:p-10">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6 sm:gap-x-10 sm:gap-y-8">
                             {/* Titulo */}
                             <div className="space-y-3">
                                 <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-neon-green/80">
@@ -309,18 +309,18 @@ export default function GameForm({ initialData, submitButtonText, gameId }: Game
                         </div>
 
                         {/* Form Actions */}
-                        <div className="flex gap-4 justify-end mt-12">
+                        <div className="flex flex-col-reverse sm:flex-row gap-4 justify-end mt-12">
                             <button
                                 type="button"
                                 onClick={() => router.back()}
-                                className="px-10 py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-all"
+                                className="w-full sm:w-auto px-6 sm:px-10 py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-all"
                             >
-                                Abortar Transacción
+                                Cancelar
                             </button>
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="px-12 py-5 rounded-2xl bg-neon-green text-deep-black text-[10px] font-black uppercase tracking-[0.2em] shadow-[0_0_30px_rgba(57,255,20,0.2)] hover:shadow-neon-green/40 transition-all disabled:opacity-50"
+                                className="w-full sm:w-auto px-8 sm:px-12 py-5 rounded-2xl bg-neon-green text-deep-black text-[10px] font-black uppercase tracking-[0.2em] shadow-[0_0_30px_rgba(57,255,20,0.2)] hover:shadow-neon-green/40 transition-all disabled:opacity-50"
                             >
                                 {isLoading ? 'Cargando...' : submitButtonText}
                             </button>

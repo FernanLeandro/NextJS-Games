@@ -78,15 +78,15 @@ export default function DashboardCharts({ games }: GameChartProps) {
 
       <div className="grid gap-10 xl:grid-cols-2">
         {/* Radar Chart Section */}
-        <section className="glass-card rounded-[32px] p-8 shadow-2xl group relative overflow-hidden">
+        <section className="glass-card rounded-[32px] p-5 md:p-8 shadow-2xl group relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-5">
              <div className="w-20 h-20 border-2 border-neon-green rounded-full animate-ping" />
           </div>
           <div className="mb-8">
-            <h2 className="text-3xl font-black text-neon-green glow-text uppercase tracking-widest italic">Radar de Sistemas</h2>
+            <h2 className="text-2xl md:text-3xl font-black text-neon-green glow-text uppercase tracking-widest italic">Radar de Sistemas</h2>
             <p className="text-xs text-gray-600 mt-2 font-bold uppercase tracking-widest">Análisis de espectro de consolas</p>
           </div>
-          <div className="h-[400px]">
+          <div className="h-[300px] md:h-[400px]">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
                 <PolarGrid stroke="#1f2937" />
@@ -109,12 +109,12 @@ export default function DashboardCharts({ games }: GameChartProps) {
         </section>
 
         {/* Area Chart Section */}
-        <section className="glass-card rounded-[32px] p-8 shadow-2xl group">
+        <section className="glass-card rounded-[32px] p-5 md:p-8 shadow-2xl group">
           <div className="mb-8">
-            <h2 className="text-3xl font-black text-neon-green glow-text uppercase tracking-widest italic">Pulsos Temporales</h2>
+            <h2 className="text-2xl md:text-3xl font-black text-neon-green glow-text uppercase tracking-widest italic">Pulsos Temporales</h2>
             <p className="text-xs text-gray-600 mt-2 font-bold uppercase tracking-widest">Cronología de lanzamientos detectados</p>
           </div>
-          <div className="h-[400px]">
+          <div className="h-[300px] md:h-[400px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={areaData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                 <defs>
