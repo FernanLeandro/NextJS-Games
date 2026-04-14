@@ -14,6 +14,8 @@ import {
     TextAlignLeft,
     Tag
 } from "@phosphor-icons/react";
+import { gameSchema } from "@/lib/validations/game";
+import { ZodError } from "zod";
 
 interface Console {
     id: number;
@@ -58,6 +60,10 @@ export default function GameForm({ initialData, submitButtonText, gameId }: Game
     const [coverPreview, setCoverPreview] = useState<string>(initialData?.cover || "");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [successMessage, setSuccessMessage] = useState<React.ReactNode>("");
 
     useEffect(() => {
         const loadConsoles = async () => {
@@ -91,6 +97,14 @@ export default function GameForm({ initialData, submitButtonText, gameId }: Game
             ...prev,
             [name]: name === "console_id" ? Number(value) : value
         }));
+        // Limpiar error del campo al escribir
+        if (fieldErrors[name]) {
+            setFieldErrors(prev => {
+                const next = { ...prev };
+                delete next[name];
+                return next;
+            });
+        }
     };
 
     const handleCoverFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,6 +116,26 @@ export default function GameForm({ initialData, submitButtonText, gameId }: Game
         e.preventDefault();
         setIsLoading(true);
         setError(null);
+        setFieldErrors({});
+
+        // Validación en el cliente con Zod
+        try {
+            gameSchema.parse({
+                ...formData,
+                cover: selectedCoverFile ? "file-pending" : (formData.cover || null)
+            });
+        } catch (err) {
+            if (err instanceof ZodError) {
+                const errors: Record<string, string> = {};
+                err.issues.forEach((e) => {
+                    if (e.path[0]) errors[e.path[0].toString()] = e.message;
+                });
+                setFieldErrors(errors);
+                setError("Por favor, corrige los campos resaltados.");
+                setIsLoading(false);
+                return;
+            }
+        }
 
         const formDataToSend = new FormData();
         formDataToSend.append("title", formData.title.trim());
@@ -121,11 +155,25 @@ export default function GameForm({ initialData, submitButtonText, gameId }: Game
                 method: gameId ? "PUT" : "POST",
                 body: formDataToSend,
             });
+            
+            const data = await response.json();
+
             if (response.ok) {
-                router.push("/games");
+                setSuccessMessage(gameId ? (
+                    <>Sincronización de <strong className="text-white">{formData.title}</strong> completada. El registro ha sido actualizado en la red central.</>
+                ) : (
+                    <>Nuevo registro detectado: <strong className="text-white">{formData.title}</strong> ha sido inyectado en el sistema con éxito.</>
+                ));
+                setShowSuccessModal(true);
             } else {
-                const errorData = await response.json();
-                setError(errorData.error || "Fallo en la sincronización de datos");
+                if (data.details) {
+                    const errors: Record<string, string> = {};
+                    data.details.forEach((d: any) => {
+                        errors[d.field] = d.message;
+                    });
+                    setFieldErrors(errors);
+                }
+                setError(data.error || "Fallo en la sincronización de datos");
             }
         } catch (err) {
             setError("Error crítico de red detectado");
@@ -143,6 +191,30 @@ export default function GameForm({ initialData, submitButtonText, gameId }: Game
 
     return (
         <div className="w-full pb-20">
+            {/* Success Modal */}
+            {showSuccessModal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-2xl p-4">
+                    <div className="w-full max-w-lg rounded-[3rem] border border-neon-green/30 bg-surface-dark p-8 sm:p-12 shadow-[0_0_50px_rgba(57,255,20,0.1)] text-center">
+                        <div className="flex justify-center mb-8">
+                            <div className="h-20 w-20 rounded-full bg-neon-green/10 border border-neon-green/20 flex items-center justify-center shadow-[0_0_20px_rgba(57,255,20,0.2)]">
+                                <Check size={40} className="text-neon-green" weight="bold" />
+                            </div>
+                        </div>
+                        <h2 className="text-3xl sm:text-5xl font-black text-neon-green uppercase tracking-tighter mb-6 italic glow-text">Éxito</h2>
+                        <p className="text-gray-400 mb-10 text-lg leading-relaxed">
+                            {successMessage}
+                        </p>
+                        <div className="flex justify-center">
+                            <button 
+                                onClick={() => router.push("/games")} 
+                                className="w-full sm:w-auto px-12 py-5 rounded-2xl bg-neon-green text-deep-black text-[10px] font-black uppercase tracking-[0.2em] shadow-[0_0_30px_rgba(57,255,20,0.2)] hover:shadow-neon-green/40 transition-all"
+                            >
+                                Continuar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             {/* Header section with Cyber aesthetics */}
             <div className="flex justify-between items-center mb-12">
                 <div>
@@ -171,7 +243,7 @@ export default function GameForm({ initialData, submitButtonText, gameId }: Game
                 <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-12 items-start">
                     {/* Media Section */}
                     <div className="space-y-6">
-                        <div className="group relative aspect-[3/4] rounded-[2.5rem] p-1 bg-gradient-to-b from-white/10 to-transparent">
+                        <div className={`group relative aspect-[3/4] rounded-[2.5rem] p-1 bg-gradient-to-b ${fieldErrors.cover ? 'from-red-500/40' : 'from-white/10'} to-transparent`}>
                             <div className="relative h-full w-full overflow-hidden rounded-[2.3rem] bg-black border border-white/5">
                                 <img
                                     src={coverPreview ? getCoverSrc(coverPreview) : getCoverSrc(formData.cover)}
@@ -190,6 +262,7 @@ export default function GameForm({ initialData, submitButtonText, gameId }: Game
                                 />
                             </div>
                         </div>
+                        {fieldErrors.cover && <p className="text-[9px] font-black text-red-500 uppercase text-center">{fieldErrors.cover}</p>}
                         <p className="text-center text-[9px] font-bold text-gray-600 uppercase tracking-widest">
                             Soportado: JPG, PNG, WEBP // Máx 5MB
                         </p>
@@ -209,9 +282,9 @@ export default function GameForm({ initialData, submitButtonText, gameId }: Game
                                     value={formData.title}
                                     onChange={handleChange}
                                     placeholder="Nombre del despliegue..."
-                                    className="cyber-input w-full bg-[#050505] border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:border-neon-green focus:shadow-[0_0_15px_rgba(57,255,20,0.1)] transition-all"
-                                    required
+                                    className={`cyber-input w-full bg-[#050505] border ${fieldErrors.title ? 'border-red-500/50' : 'border-white/10'} rounded-2xl py-4 px-6 text-white focus:outline-none focus:border-neon-green focus:shadow-[0_0_15px_rgba(57,255,20,0.1)] transition-all`}
                                 />
+                                {fieldErrors.title && <p className="text-[9px] font-black text-red-500 uppercase px-2">{fieldErrors.title}</p>}
                             </div>
 
                             {/* Consola */}
@@ -223,12 +296,12 @@ export default function GameForm({ initialData, submitButtonText, gameId }: Game
                                     name="console_id"
                                     value={formData.console_id}
                                     onChange={handleChange}
-                                    className="cyber-input w-full bg-[#050505] border border-white/10 rounded-2xl py-4 px-6 text-white appearance-none focus:outline-none focus:border-neon-green transition-all"
-                                    required
+                                    className={`cyber-input w-full bg-[#050505] border ${fieldErrors.console_id ? 'border-red-500/50' : 'border-white/10'} rounded-2xl py-4 px-6 text-white appearance-none focus:outline-none focus:border-neon-green transition-all`}
                                 >
                                     <option value={0} disabled>Seleccionar Dispositivo...</option>
                                     {consoles.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                                 </select>
+                                {fieldErrors.console_id && <p className="text-[9px] font-black text-red-500 uppercase px-2">{fieldErrors.console_id}</p>}
                             </div>
 
                             {/* Desarrollador */}
@@ -241,9 +314,9 @@ export default function GameForm({ initialData, submitButtonText, gameId }: Game
                                     name="developer"
                                     value={formData.developer}
                                     onChange={handleChange}
-                                    className="cyber-input w-full bg-[#050505] border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:border-neon-green transition-all"
-                                    required
+                                    className={`cyber-input w-full bg-[#050505] border ${fieldErrors.developer ? 'border-red-500/50' : 'border-white/10'} rounded-2xl py-4 px-6 text-white focus:outline-none focus:border-neon-green transition-all`}
                                 />
+                                {fieldErrors.developer && <p className="text-[9px] font-black text-red-500 uppercase px-2">{fieldErrors.developer}</p>}
                             </div>
 
                             {/* Género */}
@@ -256,9 +329,9 @@ export default function GameForm({ initialData, submitButtonText, gameId }: Game
                                     name="genre"
                                     value={formData.genre}
                                     onChange={handleChange}
-                                    className="cyber-input w-full bg-[#050505] border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:border-neon-green transition-all"
-                                    required
+                                    className={`cyber-input w-full bg-[#050505] border ${fieldErrors.genre ? 'border-red-500/50' : 'border-white/10'} rounded-2xl py-4 px-6 text-white focus:outline-none focus:border-neon-green transition-all`}
                                 />
+                                {fieldErrors.genre && <p className="text-[9px] font-black text-red-500 uppercase px-2">{fieldErrors.genre}</p>}
                             </div>
 
                             {/* Fecha */}
@@ -271,9 +344,9 @@ export default function GameForm({ initialData, submitButtonText, gameId }: Game
                                     name="releaseDate"
                                     value={formData.releaseDate}
                                     onChange={handleChange}
-                                    className="cyber-input w-full bg-[#050505] border border-white/10 rounded-2xl py-4 px-6 text-white color-scheme-dark focus:outline-none focus:border-neon-green transition-all"
-                                    required
+                                    className={`cyber-input w-full bg-[#050505] border ${fieldErrors.releaseDate ? 'border-red-500/50' : 'border-white/10'} rounded-2xl py-4 px-6 text-white color-scheme-dark focus:outline-none focus:border-neon-green transition-all`}
                                 />
+                                {fieldErrors.releaseDate && <p className="text-[9px] font-black text-red-500 uppercase px-2">{fieldErrors.releaseDate}</p>}
                             </div>
 
                             {/* Precio */}
@@ -287,9 +360,9 @@ export default function GameForm({ initialData, submitButtonText, gameId }: Game
                                     value={formData.price}
                                     onChange={handleChange}
                                     step="0.01"
-                                    className="cyber-input w-full bg-[#050505] border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:border-neon-green transition-all"
-                                    required
+                                    className={`cyber-input w-full bg-[#050505] border ${fieldErrors.price ? 'border-red-500/50' : 'border-white/10'} rounded-2xl py-4 px-6 text-white focus:outline-none focus:border-neon-green transition-all`}
                                 />
+                                {fieldErrors.price && <p className="text-[9px] font-black text-red-500 uppercase px-2">{fieldErrors.price}</p>}
                             </div>
                         </div>
 
@@ -303,9 +376,9 @@ export default function GameForm({ initialData, submitButtonText, gameId }: Game
                                 value={formData.description}
                                 onChange={handleChange}
                                 rows={6}
-                                className="cyber-input w-full bg-[#050505] border border-white/10 rounded-3xl py-6 px-8 text-white resize-none focus:outline-none focus:border-neon-green transition-all"
-                                required
+                                className={`cyber-input w-full bg-[#050505] border ${fieldErrors.description ? 'border-red-500/50' : 'border-white/10'} rounded-3xl py-6 px-8 text-white resize-none focus:outline-none focus:border-neon-green transition-all`}
                             />
+                            {fieldErrors.description && <p className="text-[9px] font-black text-red-500 uppercase px-2">{fieldErrors.description}</p>}
                         </div>
 
                         {/* Form Actions */}
@@ -331,3 +404,4 @@ export default function GameForm({ initialData, submitButtonText, gameId }: Game
         </div>
     );
 }
+
